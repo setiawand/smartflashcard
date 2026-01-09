@@ -2,7 +2,9 @@ import React, { useState, useEffect } from 'react';
 import { useStore } from '../store/useStore';
 import type { Flashcard } from '../store/useStore';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Check, RefreshCw, Clock, ThumbsUp, Zap, RotateCcw, Volume2 } from 'lucide-react';
+import { Check, RefreshCw, Clock, ThumbsUp, Zap, RotateCcw, Volume2, Play } from 'lucide-react';
+
+const BATCH_SIZE = 10;
 
 export const Study: React.FC = () => {
   const { cards, getDueCards, reviewCard } = useStore();
@@ -15,11 +17,11 @@ export const Study: React.FC = () => {
   useEffect(() => {
     // Initialize with due cards by default
     const due = getDueCards();
-    setStudyCards(due);
+    setStudyCards(due.slice(0, BATCH_SIZE));
   }, [getDueCards]);
 
   const startCramMode = () => {
-    setStudyCards([...cards].sort(() => Math.random() - 0.5)); // Shuffle all cards
+    setStudyCards([...cards].sort(() => Math.random() - 0.5).slice(0, BATCH_SIZE)); // Shuffle all cards
     setIsCramMode(true);
     setCurrentCardIndex(0);
     setSessionComplete(false);
@@ -32,10 +34,10 @@ export const Study: React.FC = () => {
     setIsFlipped(false);
     // If in normal mode, refresh due cards just in case
     if (!isCramMode) {
-      setStudyCards(getDueCards());
+      setStudyCards(getDueCards().slice(0, BATCH_SIZE));
     } else {
       // Re-shuffle for cram mode
-      setStudyCards([...cards].sort(() => Math.random() - 0.5));
+      setStudyCards([...cards].sort(() => Math.random() - 0.5).slice(0, BATCH_SIZE));
     }
   };
 
@@ -98,19 +100,29 @@ export const Study: React.FC = () => {
         </p>
         
         <div className="flex flex-col sm:flex-row gap-4">
+          {((!isCramMode && getDueCards().length > 0) || isCramMode) ? (
+            <button
+              onClick={restartSession}
+              className="flex items-center justify-center gap-2 px-6 py-3 bg-green-600 text-white rounded-xl font-bold hover:bg-green-700 transition-colors"
+            >
+              <Play size={20} />
+              {isCramMode ? 'Next Random Batch' : `Continue (${getDueCards().length} more)`}
+            </button>
+          ) : (
+            <button
+              onClick={restartSession}
+              className="flex items-center justify-center gap-2 px-6 py-3 bg-indigo-600 text-white rounded-xl font-bold hover:bg-indigo-700 transition-colors"
+            >
+              <RotateCcw size={20} />
+              Review Again
+            </button>
+          )}
+
           <button
             onClick={() => window.location.href = '/'}
             className="px-6 py-3 bg-gray-100 text-gray-700 rounded-xl font-bold hover:bg-gray-200 transition-colors"
           >
             Return to Dashboard
-          </button>
-          
-          <button
-            onClick={restartSession}
-            className="flex items-center justify-center gap-2 px-6 py-3 bg-indigo-600 text-white rounded-xl font-bold hover:bg-indigo-700 transition-colors"
-          >
-            <RotateCcw size={20} />
-            {isCramMode ? 'Shuffle & Restart' : 'Review Again'}
           </button>
 
           {!isCramMode && (
@@ -119,7 +131,7 @@ export const Study: React.FC = () => {
              className="flex items-center justify-center gap-2 px-6 py-3 bg-white border-2 border-indigo-600 text-indigo-600 rounded-xl font-bold hover:bg-indigo-50 transition-colors"
            >
              <Zap size={20} />
-             Cram All Cards
+             Cram Mode
            </button>
           )}
         </div>
