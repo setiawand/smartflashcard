@@ -190,16 +190,7 @@ export const Study: React.FC = () => {
             style={{ transform: 'rotateY(180deg)' }}
           >
             <span className="text-xs font-bold tracking-widest text-indigo-400 uppercase mb-2">English</span>
-            <div className="flex items-center gap-3 mb-2">
-              <h2 className="text-3xl font-bold text-indigo-900">{currentCard.back}</h2>
-              <button 
-                onClick={(e) => speak(currentCard.back, 'en', e)}
-                className="p-2 text-indigo-400 hover:text-indigo-600 hover:bg-indigo-100 rounded-full transition-colors"
-                title="Listen in English"
-              >
-                <Volume2 size={20} />
-              </button>
-            </div>
+            <h2 className="text-3xl font-bold text-indigo-900 mb-2 text-center">{currentCard.back}</h2>
             
             {currentCard.pronunciation && (
               <p className="text-lg text-indigo-600 font-medium mb-6">/{currentCard.pronunciation}/</p>
