@@ -123,7 +123,7 @@ export const Study: React.FC = () => {
           )}
 
           <button
-            onClick={() => window.location.href = '/'}
+            onClick={() => window.location.href = 'https://setiawand.github.io/smartflashcard'}
             className="px-6 py-3 bg-gray-100 text-gray-700 rounded-xl font-bold hover:bg-gray-200 transition-colors"
           >
             Return to Dashboard
