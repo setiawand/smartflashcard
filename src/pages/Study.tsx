@@ -3,11 +3,13 @@ import { useStore } from '../store/useStore';
 import type { Flashcard } from '../store/useStore';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Check, RefreshCw, Clock, ThumbsUp, Zap, RotateCcw, Volume2, Play } from 'lucide-react';
+import { useTTS } from '../hooks/useTTS';
 
 const BATCH_SIZE = 10;
 
 export const Study: React.FC = () => {
   const { cards, getDueCards, reviewCard } = useStore();
+  const { speak } = useTTS();
   const [studyCards, setStudyCards] = useState<Flashcard[]>([]);
   const [currentCardIndex, setCurrentCardIndex] = useState(0);
   const [isFlipped, setIsFlipped] = useState(false);
@@ -57,13 +59,6 @@ export const Study: React.FC = () => {
         setSessionComplete(true);
       }
     }
-  };
-
-  const speak = (text: string, e?: React.MouseEvent) => {
-    e?.stopPropagation();
-    const utterance = new SpeechSynthesisUtterance(text);
-    utterance.lang = 'ko-KR';
-    window.speechSynthesis.speak(utterance);
   };
 
   if (studyCards.length === 0 && !isCramMode) {

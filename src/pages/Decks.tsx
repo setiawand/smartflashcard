@@ -4,9 +4,11 @@ import type { Flashcard } from '../store/useStore';
 import { Plus, Trash2, Search, Edit2, Brain, Loader2, Volume2 } from 'lucide-react';
 import { format } from 'date-fns';
 import { generateFlashcards } from '../lib/ai';
+import { useTTS } from '../hooks/useTTS';
 
 export const Decks: React.FC = () => {
   const { cards, addCard, deleteCard, updateCard, apiKey, setApiKey } = useStore();
+  const { speak } = useTTS();
   const [isAdding, setIsAdding] = useState(false);
   const [showAiModal, setShowAiModal] = useState(false);
   const [isGenerating, setIsGenerating] = useState(false);
@@ -21,13 +23,6 @@ export const Decks: React.FC = () => {
     pronunciation: '',
     example: '',
   });
-
-  const speak = (text: string, e: React.MouseEvent) => {
-    e.stopPropagation();
-    const utterance = new SpeechSynthesisUtterance(text);
-    utterance.lang = 'ko-KR';
-    window.speechSynthesis.speak(utterance);
-  };
 
   const filteredCards = cards.filter(
     (card) =>
