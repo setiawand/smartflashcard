@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useStore } from '../store/useStore';
 import type { Flashcard } from '../store/useStore';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Check, X, RefreshCw, Clock, ThumbsUp, Zap, RotateCcw } from 'lucide-react';
+import { Check, RefreshCw, Clock, ThumbsUp, Zap, RotateCcw } from 'lucide-react';
 
 export const Study: React.FC = () => {
   const { cards, getDueCards, reviewCard } = useStore();

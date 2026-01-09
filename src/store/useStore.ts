@@ -24,12 +24,16 @@ interface State {
   deleteCard: (id: string) => void;
   reviewCard: (id: string, quality: number) => void;
   getDueCards: () => Flashcard[];
+  apiKey: string | null;
+  setApiKey: (key: string) => void;
 }
 
 export const useStore = create<State>()(
   persist(
     (set, get) => ({
       cards: [],
+      apiKey: null,
+      setApiKey: (key) => set({ apiKey: key }),
       addCard: (cardData) =>
         set((state) => ({
           cards: [
