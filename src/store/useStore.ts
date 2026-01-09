@@ -8,6 +8,7 @@ export interface Flashcard {
   front: string;
   back: string;
   example?: string;
+  exampleMeaning?: string;
   pronunciation?: string;
   interval: number;
   repetition: number;

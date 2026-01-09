@@ -4,6 +4,7 @@ export interface GeneratedCard {
   back: string;
   pronunciation: string;
   example: string;
+  exampleMeaning: string;
 }
 
 export const generateFlashcards = async (
@@ -19,7 +20,8 @@ export const generateFlashcards = async (
   - "front": The Korean word or phrase.
   - "back": The English meaning.
   - "pronunciation": The Romanized pronunciation.
-  - "example": A simple example sentence in Korean, followed by its English translation in parentheses.
+  - "example": A simple example sentence in Korean.
+  - "exampleMeaning": The English translation of the example sentence.
 
   Ensure the output is strictly a valid JSON array. Do not include any markdown formatting (like \`\`\`json) or explanation text. Just the raw JSON array.`;
 

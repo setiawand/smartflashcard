@@ -206,15 +206,30 @@ export const Study: React.FC = () => {
             )}
 
             {currentCard.example && (
-              <div className="bg-white/60 p-4 rounded-xl text-center relative group">
-                <p className="text-indigo-800 text-sm italic">"{currentCard.example}"</p>
-                <button 
-                  onClick={(e) => speak(currentCard.example || '', 'ko', e)}
-                  className="absolute -right-2 -top-2 p-2 bg-white text-indigo-400 hover:text-indigo-600 rounded-full shadow-sm opacity-0 group-hover:opacity-100 transition-opacity"
-                  title="Listen to example"
-                >
-                  <Volume2 size={16} />
-                </button>
+              <div className="bg-white/60 p-4 rounded-xl text-center relative group w-full">
+                <p className="text-indigo-800 text-sm italic mb-1">"{currentCard.example}"</p>
+                {currentCard.exampleMeaning && (
+                  <p className="text-indigo-600 text-xs">{currentCard.exampleMeaning}</p>
+                )}
+                
+                <div className="absolute -right-2 -top-2 flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+                  <button 
+                    onClick={(e) => speak(currentCard.example || '', 'ko', e)}
+                    className="p-2 bg-white text-indigo-400 hover:text-indigo-600 rounded-full shadow-sm"
+                    title="Listen to example (Korean)"
+                  >
+                    <Volume2 size={16} />
+                  </button>
+                  {currentCard.exampleMeaning && (
+                    <button 
+                      onClick={(e) => speak(currentCard.exampleMeaning || '', 'en', e)}
+                      className="p-2 bg-white text-indigo-400 hover:text-indigo-600 rounded-full shadow-sm"
+                      title="Listen to meaning (English)"
+                    >
+                      <Volume2 size={16} />
+                    </button>
+                  )}
+                </div>
               </div>
             )}
           </div>

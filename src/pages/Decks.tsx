@@ -22,6 +22,7 @@ export const Decks: React.FC = () => {
     back: '',
     pronunciation: '',
     example: '',
+    exampleMeaning: '',
   });
 
   const filteredCards = cards.filter(
@@ -87,7 +88,7 @@ export const Decks: React.FC = () => {
         deckId: 'default',
       });
     }
-    setFormData({ front: '', back: '', pronunciation: '', example: '' });
+    setFormData({ front: '', back: '', pronunciation: '', example: '', exampleMeaning: '' });
     setIsAdding(false);
   };
 
@@ -97,6 +98,7 @@ export const Decks: React.FC = () => {
       back: card.back,
       pronunciation: card.pronunciation || '',
       example: card.example || '',
+      exampleMeaning: card.exampleMeaning || '',
     });
     setEditingCard(card);
     setIsAdding(true);
@@ -121,7 +123,7 @@ export const Decks: React.FC = () => {
             onClick={() => {
               setIsAdding(true);
               setEditingCard(null);
-              setFormData({ front: '', back: '', pronunciation: '', example: '' });
+              setFormData({ front: '', back: '', pronunciation: '', example: '', exampleMeaning: '' });
             }}
             className="bg-indigo-600 text-white px-4 py-2 rounded-xl flex items-center gap-2 hover:bg-indigo-700 transition-colors"
           >
@@ -281,8 +283,18 @@ export const Decks: React.FC = () => {
                   value={formData.example}
                   onChange={(e) => setFormData({ ...formData, example: e.target.value })}
                   className="w-full p-3 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-indigo-500"
-                  rows={3}
+                  rows={2}
                   placeholder="Example usage..."
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">Example Meaning (Optional)</label>
+                <textarea
+                  value={formData.exampleMeaning}
+                  onChange={(e) => setFormData({ ...formData, exampleMeaning: e.target.value })}
+                  className="w-full p-3 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                  rows={2}
+                  placeholder="English meaning of the example..."
                 />
               </div>
               <div className="flex gap-3 mt-6">
