@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useStore } from '../store/useStore';
 import type { Flashcard } from '../store/useStore';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Check, RefreshCw, Clock, ThumbsUp, Zap, RotateCcw } from 'lucide-react';
+import { Check, RefreshCw, Clock, ThumbsUp, Zap, RotateCcw, Volume2 } from 'lucide-react';
 
 export const Study: React.FC = () => {
   const { cards, getDueCards, reviewCard } = useStore();
@@ -148,7 +148,16 @@ export const Study: React.FC = () => {
           {/* Front */}
           <div className="absolute w-full h-full backface-hidden bg-white rounded-3xl shadow-xl border border-gray-100 flex flex-col items-center justify-center p-8">
             <span className="text-xs font-bold tracking-widest text-gray-400 uppercase mb-4">Korean</span>
-            <h2 className="text-5xl font-bold text-gray-900 text-center">{currentCard.front}</h2>
+            <div className="flex items-center gap-3">
+              <h2 className="text-5xl font-bold text-gray-900 text-center">{currentCard.front}</h2>
+              <button 
+                onClick={(e) => speak(currentCard.front, e)}
+                className="p-3 text-gray-400 hover:text-indigo-600 hover:bg-indigo-50 rounded-full transition-colors"
+                title="Listen"
+              >
+                <Volume2 size={24} />
+              </button>
+            </div>
             <p className="mt-8 text-gray-400 text-sm">Click to flip</p>
           </div>
 
@@ -165,8 +174,15 @@ export const Study: React.FC = () => {
             )}
 
             {currentCard.example && (
-              <div className="bg-white/60 p-4 rounded-xl text-center">
+              <div className="bg-white/60 p-4 rounded-xl text-center relative group">
                 <p className="text-indigo-800 text-sm italic">"{currentCard.example}"</p>
+                <button 
+                  onClick={(e) => speak(currentCard.example, e)}
+                  className="absolute -right-2 -top-2 p-2 bg-white text-indigo-400 hover:text-indigo-600 rounded-full shadow-sm opacity-0 group-hover:opacity-100 transition-opacity"
+                  title="Listen to example"
+                >
+                  <Volume2 size={16} />
+                </button>
               </div>
             )}
           </div>

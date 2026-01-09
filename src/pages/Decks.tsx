@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { useStore } from '../store/useStore';
 import type { Flashcard } from '../store/useStore';
-import { Plus, Trash2, Search, Edit2, Brain, Loader2 } from 'lucide-react';
+import { Plus, Trash2, Search, Edit2, Brain, Loader2, Volume2 } from 'lucide-react';
 import { format } from 'date-fns';
 import { generateFlashcards } from '../lib/ai';
 
@@ -308,7 +308,16 @@ export const Decks: React.FC = () => {
         {filteredCards.map((card) => (
           <div key={card.id} className="bg-white p-5 rounded-xl border border-gray-100 shadow-sm hover:shadow-md transition-shadow group">
             <div className="flex justify-between items-start mb-2">
-              <h3 className="text-xl font-bold text-gray-900">{card.front}</h3>
+              <div className="flex items-center gap-2">
+                <h3 className="text-xl font-bold text-gray-900">{card.front}</h3>
+                <button
+                  onClick={(e) => speak(card.front, e)}
+                  className="p-1 text-gray-400 hover:text-indigo-600 hover:bg-indigo-50 rounded-full transition-colors"
+                  title="Listen"
+                >
+                  <Volume2 size={16} />
+                </button>
+              </div>
               <div className="flex gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
                 <button
                   onClick={() => handleEdit(card)}
