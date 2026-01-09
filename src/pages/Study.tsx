@@ -184,7 +184,7 @@ export const Study: React.FC = () => {
               <div className="bg-white/60 p-4 rounded-xl text-center relative group">
                 <p className="text-indigo-800 text-sm italic">"{currentCard.example}"</p>
                 <button 
-                  onClick={(e) => speak(currentCard.example, e)}
+                  onClick={(e) => speak(currentCard.example || '', e)}
                   className="absolute -right-2 -top-2 p-2 bg-white text-indigo-400 hover:text-indigo-600 rounded-full shadow-sm opacity-0 group-hover:opacity-100 transition-opacity"
                   title="Listen to example"
                 >
