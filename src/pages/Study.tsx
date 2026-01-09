@@ -22,6 +22,15 @@ export const Study: React.FC = () => {
     setStudyCards(due.slice(0, BATCH_SIZE));
   }, [getDueCards]);
 
+  useEffect(() => {
+    if (isFlipped && studyCards[currentCardIndex]) {
+      // Small delay to allow the flip animation to start
+      setTimeout(() => {
+        speak(studyCards[currentCardIndex].front);
+      }, 300);
+    }
+  }, [isFlipped, currentCardIndex, studyCards, speak]);
+
   const startCramMode = () => {
     setStudyCards([...cards].sort(() => Math.random() - 0.5).slice(0, BATCH_SIZE)); // Shuffle all cards
     setIsCramMode(true);
