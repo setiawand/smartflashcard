@@ -22,7 +22,7 @@ export const useTTS = () => {
     };
   }, []);
 
-  const speak = useCallback((text: string, e?: React.MouseEvent) => {
+  const speak = useCallback((text: string, lang: 'ko' | 'en' = 'ko', e?: React.MouseEvent) => {
     e?.stopPropagation();
     
     if (!text) return;
@@ -31,20 +31,23 @@ export const useTTS = () => {
     window.speechSynthesis.cancel();
 
     const utterance = new SpeechSynthesisUtterance(text);
-    utterance.lang = 'ko-KR';
-
-    // Try to find a specific Korean voice for better compatibility
-    // Some browsers/devices might default to English if voice isn't explicitly set
-    const koreanVoice = voices.find(
-      v => v.lang === 'ko-KR' || v.lang.includes('ko-') || v.name.toLowerCase().includes('korean')
-    );
     
-    if (koreanVoice) {
-      utterance.voice = koreanVoice;
+    // Set language-specific settings
+    if (lang === 'ko') {
+      utterance.lang = 'ko-KR';
+      const koreanVoice = voices.find(
+        v => v.lang === 'ko-KR' || v.lang.includes('ko-') || v.name.toLowerCase().includes('korean')
+      );
+      if (koreanVoice) utterance.voice = koreanVoice;
+      utterance.rate = 0.9; // Slower for Korean learning
+    } else {
+      utterance.lang = 'en-US';
+      const englishVoice = voices.find(
+        v => v.lang === 'en-US' || v.lang.includes('en-') || v.name.toLowerCase().includes('english')
+      );
+      if (englishVoice) utterance.voice = englishVoice;
+      utterance.rate = 1.0; // Normal speed for English
     }
-
-    // iOS/Mobile quirk: rate/pitch sometimes helps reset glitchy states
-    utterance.rate = 0.9; // Slightly slower is usually better for learning
 
     window.speechSynthesis.speak(utterance);
   }, [voices]);

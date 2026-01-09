@@ -313,7 +313,7 @@ export const Decks: React.FC = () => {
               <div className="flex items-center gap-2">
                 <h3 className="text-xl font-bold text-gray-900">{card.front}</h3>
                 <button
-                  onClick={(e) => speak(card.front, e)}
+                  onClick={(e) => speak(card.front, 'ko', e)}
                   className="p-1 text-gray-400 hover:text-indigo-600 hover:bg-indigo-50 rounded-full transition-colors"
                   title="Listen"
                 >

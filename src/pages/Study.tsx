@@ -26,7 +26,7 @@ export const Study: React.FC = () => {
     if (isFlipped && studyCards[currentCardIndex]) {
       // Small delay to allow the flip animation to start
       setTimeout(() => {
-        speak(studyCards[currentCardIndex].front);
+        speak(studyCards[currentCardIndex].front, 'ko');
       }, 300);
     }
   }, [isFlipped, currentCardIndex, studyCards, speak]);
@@ -174,7 +174,7 @@ export const Study: React.FC = () => {
             <div className="flex items-center gap-3">
               <h2 className="text-5xl font-bold text-gray-900 text-center">{currentCard.front}</h2>
               <button 
-                onClick={(e) => speak(currentCard.front, e)}
+                onClick={(e) => speak(currentCard.front, 'ko', e)}
                 className="p-3 text-gray-400 hover:text-indigo-600 hover:bg-indigo-50 rounded-full transition-colors"
                 title="Listen"
               >
@@ -190,7 +190,16 @@ export const Study: React.FC = () => {
             style={{ transform: 'rotateY(180deg)' }}
           >
             <span className="text-xs font-bold tracking-widest text-indigo-400 uppercase mb-2">English</span>
-            <h2 className="text-3xl font-bold text-indigo-900 mb-2">{currentCard.back}</h2>
+            <div className="flex items-center gap-3 mb-2">
+              <h2 className="text-3xl font-bold text-indigo-900">{currentCard.back}</h2>
+              <button 
+                onClick={(e) => speak(currentCard.back, 'en', e)}
+                className="p-2 text-indigo-400 hover:text-indigo-600 hover:bg-indigo-100 rounded-full transition-colors"
+                title="Listen in English"
+              >
+                <Volume2 size={20} />
+              </button>
+            </div>
             
             {currentCard.pronunciation && (
               <p className="text-lg text-indigo-600 font-medium mb-6">/{currentCard.pronunciation}/</p>
@@ -200,7 +209,7 @@ export const Study: React.FC = () => {
               <div className="bg-white/60 p-4 rounded-xl text-center relative group">
                 <p className="text-indigo-800 text-sm italic">"{currentCard.example}"</p>
                 <button 
-                  onClick={(e) => speak(currentCard.example || '', e)}
+                  onClick={(e) => speak(currentCard.example || '', 'ko', e)}
                   className="absolute -right-2 -top-2 p-2 bg-white text-indigo-400 hover:text-indigo-600 rounded-full shadow-sm opacity-0 group-hover:opacity-100 transition-opacity"
                   title="Listen to example"
                 >
