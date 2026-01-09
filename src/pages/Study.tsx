@@ -5,7 +5,8 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { Check, RefreshCw, Clock, ThumbsUp, Zap, RotateCcw, Volume2, Play, Mic, Loader2, X } from 'lucide-react';
 import { useTTS } from '../hooks/useTTS';
 import { useSpeechRecognition } from '../hooks/useSpeechRecognition';
-import { evaluatePronunciation, EvaluationResult } from '../lib/ai';
+import { evaluatePronunciation } from '../lib/ai';
+import type { EvaluationResult } from '../lib/ai';
 
 const BATCH_SIZE = 10;
 

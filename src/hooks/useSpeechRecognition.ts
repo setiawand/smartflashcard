@@ -1,8 +1,9 @@
 import { useState, useEffect, useCallback } from 'react';
 
-interface SpeechRecognitionResult {
-  transcript: string;
-  isFinal: boolean;
+// Define types for Web Speech API
+interface Window {
+  webkitSpeechRecognition: any;
+  SpeechRecognition: any;
 }
 
 export const useSpeechRecognition = (lang: string = 'ko-KR') => {
@@ -24,7 +25,7 @@ export const useSpeechRecognition = (lang: string = 'ko-KR') => {
     }
 
     try {
-      const SpeechRecognition = window.webkitSpeechRecognition || window.SpeechRecognition;
+      const SpeechRecognition = (window as any).webkitSpeechRecognition || (window as any).SpeechRecognition;
       const recognition = new SpeechRecognition();
 
       recognition.lang = lang;
