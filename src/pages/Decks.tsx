@@ -22,6 +22,13 @@ export const Decks: React.FC = () => {
     example: '',
   });
 
+  const speak = (text: string, e: React.MouseEvent) => {
+    e.stopPropagation();
+    const utterance = new SpeechSynthesisUtterance(text);
+    utterance.lang = 'ko-KR';
+    window.speechSynthesis.speak(utterance);
+  };
+
   const filteredCards = cards.filter(
     (card) =>
       card.front.toLowerCase().includes(searchTerm.toLowerCase()) ||
