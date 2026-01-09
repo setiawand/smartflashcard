@@ -2,19 +2,29 @@ import React, { useState, useEffect } from 'react';
 import { useStore } from '../store/useStore';
 import type { Flashcard } from '../store/useStore';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Check, RefreshCw, Clock, ThumbsUp, Zap, RotateCcw, Volume2, Play } from 'lucide-react';
+import { Check, RefreshCw, Clock, ThumbsUp, Zap, RotateCcw, Volume2, Play, Mic, Loader2, X } from 'lucide-react';
 import { useTTS } from '../hooks/useTTS';
+import { useSpeechRecognition } from '../hooks/useSpeechRecognition';
+import { evaluatePronunciation, EvaluationResult } from '../lib/ai';
 
 const BATCH_SIZE = 10;
 
 export const Study: React.FC = () => {
-  const { cards, getDueCards, reviewCard } = useStore();
+  const { cards, getDueCards, reviewCard, apiKey } = useStore();
   const { speak } = useTTS();
+  const { isListening, transcript, startListening, isSupported } = useSpeechRecognition();
+  
   const [studyCards, setStudyCards] = useState<Flashcard[]>([]);
   const [currentCardIndex, setCurrentCardIndex] = useState(0);
   const [isFlipped, setIsFlipped] = useState(false);
   const [sessionComplete, setSessionComplete] = useState(false);
   const [isCramMode, setIsCramMode] = useState(false);
+  
+  // Practice Mode State
+  const [showPractice, setShowPractice] = useState(false);
+  const [evaluation, setEvaluation] = useState<EvaluationResult | null>(null);
+  const [isEvaluating, setIsEvaluating] = useState(false);
+  const [practiceError, setPracticeError] = useState<string | null>(null);
 
   useEffect(() => {
     // Initialize with due cards by default
@@ -30,6 +40,49 @@ export const Study: React.FC = () => {
       }, 300);
     }
   }, [isFlipped, currentCardIndex, studyCards, speak]);
+
+  // Handle Speech Recognition Result
+  useEffect(() => {
+    if (transcript && showPractice && !isListening) {
+      handleEvaluation(transcript);
+    }
+  }, [transcript, isListening]);
+
+  const handleEvaluation = async (userSpeech: string) => {
+    if (!apiKey) {
+      setPracticeError('Please add your OpenAI API Key in settings to use AI evaluation.');
+      return;
+    }
+
+    setIsEvaluating(true);
+    setPracticeError(null);
+    
+    try {
+      const result = await evaluatePronunciation(
+        apiKey,
+        studyCards[currentCardIndex].front,
+        userSpeech
+      );
+      setEvaluation(result);
+    } catch (error) {
+      setPracticeError('Failed to evaluate pronunciation. Please try again.');
+    } finally {
+      setIsEvaluating(false);
+    }
+  };
+
+  const startPractice = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    setShowPractice(true);
+    setEvaluation(null);
+    setPracticeError(null);
+  };
+
+  const closePractice = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    setShowPractice(false);
+    setEvaluation(null);
+  };
 
   const startCramMode = () => {
     setStudyCards([...cards].sort(() => Math.random() - 0.5).slice(0, BATCH_SIZE)); // Shuffle all cards
@@ -181,6 +234,87 @@ export const Study: React.FC = () => {
                 <Volume2 size={24} />
               </button>
             </div>
+            
+            {/* Practice Button */}
+            {isSupported && !showPractice && (
+              <button
+                onClick={startPractice}
+                className="mt-6 flex items-center gap-2 px-4 py-2 bg-indigo-50 text-indigo-600 rounded-full hover:bg-indigo-100 transition-colors text-sm font-bold"
+              >
+                <Mic size={16} />
+                Practice Pronunciation
+              </button>
+            )}
+
+            {/* Practice Modal/Overlay */}
+            {showPractice && (
+              <div 
+                className="absolute inset-0 bg-white/95 backdrop-blur-sm rounded-3xl flex flex-col items-center justify-center p-6 z-10"
+                onClick={(e) => e.stopPropagation()}
+              >
+                <button 
+                  onClick={closePractice}
+                  className="absolute top-4 right-4 text-gray-400 hover:text-gray-600"
+                >
+                  <X size={24} />
+                </button>
+
+                <h3 className="text-lg font-bold text-gray-900 mb-4">Pronunciation Check</h3>
+                
+                {!evaluation && !isEvaluating && (
+                  <>
+                    <div className={`p-6 rounded-full bg-indigo-100 mb-6 transition-all ${isListening ? 'ring-4 ring-indigo-200 scale-110' : ''}`}>
+                      <Mic size={32} className={`text-indigo-600 ${isListening ? 'animate-pulse' : ''}`} />
+                    </div>
+                    
+                    <button
+                      onClick={() => startListening()}
+                      disabled={isListening}
+                      className="px-6 py-3 bg-indigo-600 text-white rounded-xl font-bold hover:bg-indigo-700 disabled:opacity-50 mb-4"
+                    >
+                      {isListening ? 'Listening...' : 'Tap to Speak'}
+                    </button>
+                    
+                    {practiceError && (
+                      <p className="text-red-500 text-sm text-center">{practiceError}</p>
+                    )}
+                    
+                    <p className="text-gray-400 text-sm">Say: "{currentCard.front}"</p>
+                  </>
+                )}
+
+                {isEvaluating && (
+                  <div className="flex flex-col items-center">
+                    <Loader2 size={32} className="text-indigo-600 animate-spin mb-4" />
+                    <p className="text-gray-600 font-medium">Analyzing your pronunciation...</p>
+                  </div>
+                )}
+
+                {evaluation && (
+                  <div className="text-center w-full animate-in fade-in slide-in-from-bottom-4">
+                    <div className={`text-5xl font-bold mb-2 ${evaluation.score >= 80 ? 'text-green-600' : evaluation.score >= 50 ? 'text-orange-500' : 'text-red-500'}`}>
+                      {evaluation.score}%
+                    </div>
+                    <p className="text-gray-900 font-medium mb-4">{evaluation.score >= 80 ? 'Excellent!' : evaluation.score >= 50 ? 'Good try!' : 'Keep practicing!'}</p>
+                    
+                    <div className="bg-gray-50 p-4 rounded-xl mb-6 text-sm text-gray-600">
+                      "{evaluation.feedback}"
+                    </div>
+                    
+                    <button
+                      onClick={() => {
+                        setEvaluation(null);
+                        setPracticeError(null);
+                      }}
+                      className="text-indigo-600 font-bold hover:underline"
+                    >
+                      Try Again
+                    </button>
+                  </div>
+                )}
+              </div>
+            )}
+
             <p className="mt-8 text-gray-400 text-sm">Click to flip</p>
           </div>
 
