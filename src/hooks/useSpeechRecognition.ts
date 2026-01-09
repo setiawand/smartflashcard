@@ -1,11 +1,5 @@
 import { useState, useEffect, useCallback } from 'react';
 
-// Define types for Web Speech API
-interface Window {
-  webkitSpeechRecognition: any;
-  SpeechRecognition: any;
-}
-
 export const useSpeechRecognition = (lang: string = 'ko-KR') => {
   const [isListening, setIsListening] = useState(false);
   const [transcript, setTranscript] = useState('');
